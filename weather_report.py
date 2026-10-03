@@ -161,3 +161,21 @@ for day in range(3):
     )
 
     print("----------------------------------------")
+    # Save weather information as a JSON file
+
+save_json = input(
+    "\n날씨 정보를 JSON 파일로 저장하시겠습니까? (y/n): "
+).strip().lower()
+
+if save_json == "y":
+    filename = f"weather_report_{city}.json"
+
+    import json
+
+    with open(filename, "w", encoding="utf-8") as file:
+        json.dump(weather_data, file, ensure_ascii=False, indent=4)
+
+    print(f"날씨 정보가 {filename} 파일에 저장되었습니다.")
+
+else:
+    print("날씨 정보를 저장하지 않았습니다.")
