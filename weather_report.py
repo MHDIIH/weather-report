@@ -212,3 +212,20 @@ if rain_probability >= 50:
     print("☂️ 우산을 준비하세요!")
 else:
     print("☀️ 비가 올 가능성이 낮습니다.")
+    # Compare today's and tomorrow's temperature
+
+today_max = daily_max[0]
+tomorrow_max = daily_max[1]
+
+print("\n========================================")
+print("🌡️ 기온 비교")
+print("========================================")
+
+if tomorrow_max > today_max:
+    difference = tomorrow_max - today_max
+    print(f"내일은 오늘보다 {difference:.1f} °C 더 따뜻합니다.")
+elif tomorrow_max < today_max:
+    difference = today_max - tomorrow_max
+    print(f"내일은 오늘보다 {difference:.1f} °C 더 춥습니다.")
+else:
+    print("내일은 오늘과 기온이 비슷합니다.")
