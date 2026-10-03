@@ -1,17 +1,23 @@
 import requests
-import json
 
+# Weather Report Program
 
-# 지역 입력
+# Get the city name from the user
 city = input("날씨를 확인할 지역을 입력하세요 (기본값: 서울): ").strip()
 
+# Use Seoul as the default city
 if not city:
     city = "서울"
 
-print(f"\n{city}의 날씨 정보를 가져오는 중입니다...")
+print("\n========================================")
+print("날씨 리포트")
+print("========================================")
+
+print(f"지역: {city}")
+print("날씨 정보를 불러오는 중입니다...")
 
 
-# 지역 이름으로 위도와 경도 찾기
+# Find the coordinates of the city
 geo_url = "https://geocoding-api.open-meteo.com/v1/search"
 
 geo_params = {
@@ -24,17 +30,19 @@ geo_params = {
 geo_response = requests.get(geo_url, params=geo_params)
 geo_data = geo_response.json()
 
-if "results" not in geo_data:
+if "results" in geo_data:
+    latitude = geo_data["results"][0]["latitude"]
+    longitude = geo_data["results"][0]["longitude"]
+
+    print(f"위도: {latitude}")
+    print(f"경도: {longitude}")
+
+else:
     print("지역을 찾을 수 없습니다.")
     exit()
 
-latitude = geo_data["results"][0]["latitude"]
-longitude = geo_data["results"][0]["longitude"]
 
-print(f"📍 위치: 위도 {latitude}, 경도 {longitude}")
-
-
-# 날씨 정보 가져오기
+# Get 3-day weather forecast
 weather_url = "https://api.open-meteo.com/v1/forecast"
 
 weather_params = {
@@ -60,7 +68,7 @@ weather_response = requests.get(weather_url, params=weather_params)
 weather_data = weather_response.json()
 
 
-# 날씨 코드 → 한글 날씨
+# Weather code to Korean weather description
 def get_weather_text(code):
     if code == 0:
         return "맑음"
@@ -84,7 +92,7 @@ def get_weather_text(code):
         return "알 수 없음"
 
 
-# 시간별 날씨 정보
+# Hourly weather information
 times = weather_data["hourly"]["time"]
 temperatures = weather_data["hourly"]["temperature_2m"]
 rain_probabilities = weather_data["hourly"]["precipitation_probability"]
@@ -93,26 +101,26 @@ wind_speeds = weather_data["hourly"]["wind_speed_10m"]
 weather_codes = weather_data["hourly"]["weather_code"]
 
 
-# 일별 날씨 정보
+# Daily weather information
 daily_times = weather_data["daily"]["time"]
 daily_max = weather_data["daily"]["temperature_2m_max"]
 daily_min = weather_data["daily"]["temperature_2m_min"]
 
 
-# 시간으로 날씨 데이터 찾기
+# Create a time index
 time_index = {}
 
 for i in range(len(times)):
     time_index[times[i]] = i
 
 
-# 날씨 리포트 출력
+# Weather report
 print("\n========================================")
 print("☁️ 날씨 리포트 (Open-Meteo API)")
 print("========================================")
 
 
-# 3일간의 날씨 출력
+# Display 3-day weather forecast
 for day in range(3):
 
     date = daily_times[day]
@@ -129,7 +137,7 @@ for day in range(3):
     print("----------------------------------------")
 
 
-    # 오전 6시
+    # 06:00 weather
     morning_time = date + "T06:00"
     morning_index = time_index[morning_time]
 
@@ -141,7 +149,7 @@ for day in range(3):
     print(f"풍속: {wind_speeds[morning_index]} m/s")
 
 
-    # 오후 3시
+    # 15:00 weather
     afternoon_time = date + "T15:00"
     afternoon_index = time_index[afternoon_time]
 
@@ -153,21 +161,9 @@ for day in range(3):
     print(f"풍속: {wind_speeds[afternoon_index]} m/s")
 
 
-    # 일일 최저 / 최고 기온
+    # Daily minimum and maximum temperature
     print(
         f"\n🌡️ 일일 기온: 최저 {daily_min[day]} °C / 최고 {daily_max[day]} °C"
     )
 
     print("----------------------------------------")
-    # JSON 파일로 저장할지 선택
-save_json = input("\n날씨 정보를 JSON 파일로 저장하시겠습니까? (y/n): ").strip().lower()
-
-if save_json == "y":
-    filename = f"weather_report_{city}.json"
-
-    with open(filename, "w", encoding="utf-8") as file:
-        json.dump(weather_data, file, ensure_ascii=False, indent=4)
-
-    print(f"날씨 정보가 {filename} 파일에 저장되었습니다.")
-else:
-    print("날씨 정보를 저장하지 않았습니다.")
