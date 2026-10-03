@@ -195,3 +195,20 @@ elif today_temperature < 28:
     print("👕 날씨가 좋습니다. 가벼운 옷차림이 좋습니다.")
 else:
     print("☀️ 날씨가 덥습니다. 시원한 옷차림을 추천합니다.")
+    # Rain alert
+
+today_date = daily_times[0]
+today_afternoon = today_date + "T15:00"
+today_afternoon_index = time_index[today_afternoon]
+
+rain_probability = rain_probabilities[today_afternoon_index]
+
+print("\n========================================")
+print("☔ 강수 알림")
+print("========================================")
+
+if rain_probability >= 50:
+    print("⚠️ 비가 올 가능성이 높습니다.")
+    print("☂️ 우산을 준비하세요!")
+else:
+    print("☀️ 비가 올 가능성이 낮습니다.")
