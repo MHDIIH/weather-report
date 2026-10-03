@@ -179,3 +179,19 @@ if save_json == "y":
 
 else:
     print("날씨 정보를 저장하지 않았습니다.")
+    # Simple weather advice
+
+today_temperature = temperatures[time_index[daily_times[0] + "T15:00"]]
+
+print("\n========================================")
+print("💡 날씨 추천")
+print("========================================")
+
+if today_temperature < 10:
+    print("🧥 날씨가 쌀쌀합니다. 따뜻한 옷을 입는 것이 좋습니다.")
+elif today_temperature < 20:
+    print("🧥 가벼운 겉옷을 준비하는 것이 좋습니다.")
+elif today_temperature < 28:
+    print("👕 날씨가 좋습니다. 가벼운 옷차림이 좋습니다.")
+else:
+    print("☀️ 날씨가 덥습니다. 시원한 옷차림을 추천합니다.")
